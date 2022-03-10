@@ -182,21 +182,26 @@ var TestRail = /** @class */ (function () {
     };
     // This function will attach failed screenshot on each test result(comment) if founds it
     TestRail.prototype.uploadScreenshots = function (caseId, resultId) {
-        var _this = this;
-        var SCREENSHOTS_FOLDER_PATH = path.join(__dirname, 'cypress/screenshots');
-        fs.readdir(SCREENSHOTS_FOLDER_PATH, function (err, files) {
+        var SCREENSHOTS_FOLDER_PATH = path.join(path.resolve('./'), 'cypress/screenshots/');
+        fs.readdir(SCREENSHOTS_FOLDER_PATH, function (err, folders) {
             if (err) {
                 return console.log('Unable to scan screenshots folder: ' + err);
             }
-            files.forEach(function (file) {
-                if (file.includes("C" + caseId) && /(failed|attempt)/g.test(file)) {
-                    try {
-                        _this.uploadAttachment(resultId, SCREENSHOTS_FOLDER_PATH + file);
-                    }
-                    catch (err) {
-                        console.log('Screenshot upload error: ', err);
-                    }
+            fs.readdir(SCREENSHOTS_FOLDER_PATH + folders, function (err, files) {
+                var _this = this;
+                if (err) {
+                    return console.log('Unable to scan screenshots files: ' + err);
                 }
+                files.forEach(function (file) {
+                    if (file.includes("C" + caseId) && /(failed|attempt)/g.test(file)) {
+                        try {
+                            _this.uploadAttachment(resultId, SCREENSHOTS_FOLDER_PATH + folders + "/" + file);
+                        }
+                        catch (err) {
+                            console.log('Screenshot upload error: ', err);
+                        }
+                    }
+                });
             });
         });
     };

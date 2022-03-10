@@ -95,7 +95,9 @@ export class TestRailValidation {
         break;
       }
     }
-
+    if (!result) {
+      result = 'cypress/integration/**/*.ts';
+    }
     const specArg = result.split(/,/);
     for (index = 0; index < specArg.length; ++index) {
       value = specArg[index];
